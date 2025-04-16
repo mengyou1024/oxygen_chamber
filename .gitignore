@@ -279,3 +279,6 @@ rtthread.bin
 .vscode/settings.json
 *.scvd
 packages/packages.dbsqlite
+
+/cconfig.h
+/rtconfig_preinc.h
