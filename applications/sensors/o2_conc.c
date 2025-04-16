@@ -30,7 +30,7 @@ static void o2_conc_process_thread(void* param) {
     uint8_t        buffer[RT_SERIAL_RB_BUFSZ] = {0};
     uint8_t        buffer_len                 = 0;
     O2_CONC_STATUS status                     = O2_CONC_WAIT_HEADER;
-    uint8_t        payload_buf[8]             = {0};
+    uint8_t        payload_buf[6]             = {0};
     uint8_t        payload_len                = 0;
 
     while (1) {
@@ -39,26 +39,16 @@ static void o2_conc_process_thread(void* param) {
         buffer_len += rt_device_read(uart_device, 0, buffer, 1);
         switch (status) {
             case O2_CONC_WAIT_HEADER:
-                if (buffer[buffer_len - 1] == 0x16) {
+                if (buffer[buffer_len - 1] == 0xFF) {
                     rt_sem_take(rx_sem, RT_WAITING_FOREVER);
                     // 读取长度
                     buffer_len += rt_device_read(uart_device, 0, buffer, 1);
-                    uint8_t length = buffer[buffer_len - 1];
-                    if (length != 0x09) {
-                        LOG_E("length error %d", length);
+                    uint8_t head = buffer[buffer_len - 1];
+                    if (head != 0x09) {
+                        LOG_E("head error %d", head);
                         buffer_len = 0; // 重置缓冲区
                         break;
                     }
-
-                    // 读取命令符
-                    buffer_len += rt_device_read(uart_device, 0, buffer, 1);
-                    uint8_t cmd = buffer[buffer_len - 1];
-                    if (length != 0x01) {
-                        LOG_E("length CMD %d", cmd);
-                        buffer_len = 0; // 重置缓冲区
-                        break;
-                    }
-
                     status      = O2_CONC_RESOLVE_DATA;
                     payload_len = 0;
                 } else {
@@ -68,7 +58,7 @@ static void o2_conc_process_thread(void* param) {
 
             case O2_CONC_RESOLVE_DATA:
                 payload_buf[payload_len++] = buffer[buffer_len - 1];
-                if (payload_len >= 8) {
+                if (payload_len >= sizeof(payload_buf)) {
                     status      = O2_CONC_CHECKSUM;
                     payload_len = 0;
                 }
@@ -76,7 +66,7 @@ static void o2_conc_process_thread(void* param) {
 
             case O2_CONC_CHECKSUM: {
                 uint8_t checksum = 0;
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < sizeof(payload_buf); i++) {
                     checksum += payload_buf[i];
                 }
                 checksum = 0x00 - (0x20 + checksum);
@@ -140,7 +130,7 @@ void o2_conc_init(void) {
         "o2con_proc",
         o2_conc_process_thread,
         RT_NULL,
-        5 * 1024,
+        2 * 1024,
         RT_THREAD_PRIORITY_MAX / 2,
         10);
 
@@ -156,7 +146,7 @@ void o2_conc_init(void) {
     }
 }
 
-rt_err_t o2_conc_value_wait_valid(uint32_t timeout) {
+rt_err_t o2_conc_value_wait_valid(rt_int32_t timeout) {
     rt_tick_t start_tick = rt_tick_get();
     while (o2_conc_data_valid == RT_FALSE) {
         if (rt_tick_get() - start_tick > timeout) {

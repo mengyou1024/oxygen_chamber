@@ -30,7 +30,7 @@ typedef struct {
  * @param timeout 超时时间ms
  * @return RT_OK 成功, -RT_ETIMEOUT 超时
  */
-rt_err_t o2_conc_value_valid(uint32_t timeout);
+rt_err_t o2_conc_value_valid(rt_int32_t timeout);
 
 /**
  * @brief 获取氧浓度数据

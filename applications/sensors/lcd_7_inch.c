@@ -8,10 +8,10 @@
 #include <rtthread.h>
 #include <semaphore.h>
 
-static rt_device_t uart_device                    = RT_NULL;
-static rt_sem_t    rx_sem                         = RT_NULL;
-static rt_mutex_t  lcd_dev_mutex                  = RT_NULL;
-static rt_sem_t    recv_ack_sem                   = RT_NULL;
+static rt_device_t uart_device   = RT_NULL;
+static rt_sem_t    rx_sem        = RT_NULL;
+static rt_mutex_t  lcd_dev_mutex = RT_NULL;
+static rt_sem_t    recv_ack_sem  = RT_NULL;
 
 static uint8_t   _oxygen_concentration_value = 0;
 static rt_bool_t _oxygen_concentration_valid = RT_FALSE;
@@ -150,7 +150,7 @@ void lcd_7_inch_init(void) {
         "lcd_process",
         lcd_process_thread,
         RT_NULL,
-        5 * 1024,
+        2 * 1024,
         RT_THREAD_PRIORITY_MAX / 2,
         10);
 
@@ -184,7 +184,7 @@ rt_err_t lcd_7_send_data(lcd_7_send_struct_t data) {
     return RT_EOK;
 }
 
-rt_err_t lcd_7_wait_o2_value_valid(uint32_t timeout) {
+rt_err_t lcd_7_wait_o2_value_valid(rt_int32_t timeout) {
     rt_tick_t start_tick = rt_tick_get();
     while (_oxygen_concentration_valid == RT_FALSE) {
         if (rt_tick_get() - start_tick > timeout) {

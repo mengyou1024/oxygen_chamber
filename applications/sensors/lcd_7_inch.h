@@ -25,7 +25,7 @@ rt_err_t lcd_7_send_data(lcd_7_send_struct_t data);
  * @param timeout 超时时间ms
  * @return RT_OK 成功, -RT_ETIMEOUT 超时
  */
-rt_err_t lcd_7_wait_o2_value_valid(uint32_t timeout);
+rt_err_t lcd_7_wait_o2_value_valid(rt_int32_t timeout);
 
 /**
  * @brief 获取lcd设置的氧浓度数据
