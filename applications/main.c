@@ -22,12 +22,11 @@
 #define LED1_PIN GET_PIN(B, 1)
 
 int main(void) {
-    int count = 1;
 
     /* set LED1 pin mode to output */
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
 
-    while (count++) {
+    while (1) {
         rt_pin_write(LED1_PIN, PIN_HIGH);
         LOG_D("Hello World!");
         rt_thread_mdelay(1000);
