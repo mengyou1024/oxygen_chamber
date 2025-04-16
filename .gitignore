@@ -276,6 +276,7 @@ config.log
 
 .config.old
 rtthread.bin
+rtthread.elf
 .vscode/settings.json
 *.scvd
 packages/packages.dbsqlite

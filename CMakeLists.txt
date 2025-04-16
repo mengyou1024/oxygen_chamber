@@ -55,13 +55,13 @@ ADD_DEFINITIONS(
 )
 
 SET(PROJECT_SOURCES
+	applications/sensors/sco3_o2.c
+	applications/main.c
 	applications/sensors/gas_pressure.c
 	applications/sensors/lcd_7_inch.c
-	applications/sensors/sco3_o2.c
-	applications/sensors/lcd_3_5_inch.c
-	applications/main.c
-	applications/sensors/nai_conc.c
 	applications/sensors/o2_conc.c
+	applications/sensors/nai_conc.c
+	applications/sensors/lcd_3_5_inch.c
 	rt-thread/components/libc/compilers/common/cctype.c
 	rt-thread/components/libc/compilers/common/cstdio.c
 	rt-thread/components/libc/compilers/common/cstdlib.c
@@ -90,10 +90,10 @@ SET(PROJECT_SOURCES
 	libraries/gd32_drivers/drv_adc.c
 	libraries/gd32_drivers/drv_gpio.c
 	libraries/gd32_drivers/drv_usart.c
-	rt-thread/components/finsh/msh.c
-	rt-thread/components/finsh/msh_parse.c
-	rt-thread/components/finsh/cmd.c
 	rt-thread/components/finsh/shell.c
+	rt-thread/components/finsh/msh_parse.c
+	rt-thread/components/finsh/msh.c
+	rt-thread/components/finsh/cmd.c
 	rt-thread/src/clock.c
 	rt-thread/src/components.c
 	rt-thread/src/device.c
@@ -108,12 +108,12 @@ SET(PROJECT_SOURCES
 	rt-thread/src/thread.c
 	rt-thread/src/timer.c
 	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_misc.c
-	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_exti.c
-	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_rcu.c
 	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_gpio.c
-	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_adc.c
 	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_usart.c
 	libraries/GD32F20x_Firmware_Library/CMSIS/GD/GD32F20x/Source/system_gd32f20x.c
+	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_rcu.c
+	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_exti.c
+	libraries/GD32F20x_Firmware_Library/GD32F20x_standard_peripheral/Source/gd32f20x_adc.c
 )
 
 LINK_DIRECTORIES(
