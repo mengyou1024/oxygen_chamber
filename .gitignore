@@ -282,3 +282,4 @@ packages/packages.dbsqlite
 
 /cconfig.h
 /rtconfig_preinc.h
+/RTE/
