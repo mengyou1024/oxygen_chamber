@@ -6,10 +6,8 @@
 extern "C" {
 #endif
 
+#include "sensors_config.h"
 #include <rtdef.h>
-
-#define NAI_CONC_UART "uart1"
-
 
 #ifdef __cplusplus
 }

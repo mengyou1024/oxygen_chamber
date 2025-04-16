@@ -4,9 +4,8 @@
 extern "C" {
 #endif
 
+#include "sensors_config.h"
 #include <rtdef.h>
-
-#define LCD_3_5_UART "uart3"
 
 void lcd_3_5_init(void);
 

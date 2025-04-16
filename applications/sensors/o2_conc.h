@@ -14,9 +14,8 @@
 extern "C" {
 #endif
 
+#include "sensors_config.h"
 #include <rtdef.h>
-
-#define O2_CONC_UART "uart1"
 
 void o2_conc_init(void);
 

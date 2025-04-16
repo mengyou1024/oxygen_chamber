@@ -6,10 +6,8 @@
 extern "C" {
 #endif
 
+#include "sensors_config.h"
 #include <rtdef.h>
-
-#define SCO3_O2_UART "uart0"
-
 
 #ifdef __cplusplus
 }

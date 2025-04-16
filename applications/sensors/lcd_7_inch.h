@@ -5,9 +5,8 @@ extern "C" {
 #endif
 
 #include "lcd_3_5_inch.h"
+#include "sensors_config.h"
 #include <rtdef.h>
-
-#define LCD_7_INCH_UART "uart3"
 
 typedef lcd_3_5_send_struct lcd_7_send_struct;
 typedef lcd_7_send_struct*  lcd_7_send_struct_t;

@@ -10,10 +10,10 @@
 static rt_device_t device = RT_NULL;
 
 void lcd_3_5_init() {
-    device = rt_device_find(LCD_3_5_UART);
+    device = rt_device_find(LCD_3_5_INCH_UART);
 
     if (device == RT_NULL) {
-        LOG_E("%s not found", LCD_3_5_UART);
+        LOG_E("%s not found", LCD_3_5_INCH_UART);
     }
 
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
@@ -22,7 +22,7 @@ void lcd_3_5_init() {
     }
 
     if (rt_device_open(device, RT_DEVICE_FLAG_WRONLY) != RT_EOK) {
-        LOG_E("%s open failed", LCD_3_5_UART);
+        LOG_E("%s open failed", LCD_3_5_INCH_UART);
     }
 }
 
