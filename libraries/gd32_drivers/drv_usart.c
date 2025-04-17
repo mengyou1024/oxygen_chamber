@@ -326,7 +326,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     gpio_init(uart->tx_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, uart->tx_pin);
 
     /* connect port to USARTx_Rx */
-    gpio_init(uart->rx_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, uart->rx_pin);
+    gpio_init(uart->rx_port, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ, uart->rx_pin);
 #endif
 
     NVIC_SetPriority(uart->irqn, 0);
@@ -348,6 +348,8 @@ static rt_err_t gd32_uart_configure(struct rt_serial_device *serial, struct seri
     uart = (struct gd32_uart *)serial->parent.user_data;
 
     gd32_uart_gpio_init(uart);
+    
+    usart_deinit(uart->uart_periph);
 
     usart_baudrate_set(uart->uart_periph, cfg->baud_rate);
 
@@ -383,6 +385,11 @@ static rt_err_t gd32_uart_configure(struct rt_serial_device *serial, struct seri
     default:
         usart_parity_config(uart->uart_periph, USART_PM_NONE);
         break;
+    }
+
+    if (uart->uart_periph == USART0 || uart->uart_periph == USART1 || uart->uart_periph == USART2 || uart->uart_periph == USART5) {
+        usart_hardware_flow_cts_config(uart->uart_periph, USART_RTS_DISABLE);
+        usart_hardware_flow_rts_config(uart->uart_periph, USART_CTS_DISABLE);
     }
 
     usart_receive_config(uart->uart_periph, USART_RECEIVE_ENABLE);
