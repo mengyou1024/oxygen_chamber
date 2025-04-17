@@ -29,9 +29,22 @@ rt_err_t lcd_7_wait_o2_value_valid(rt_int32_t timeout);
 
 /**
  * @brief 获取lcd设置的氧浓度数据
- * @return 氧浓度数据, 如果值无效则会阻塞等待
+ * @return 氧浓度数据
  */
 uint8_t lcd_7_get_o2_value(void);
+
+/**
+ * @brief 等待设置制氧机工作状态的值有效
+ * @param timeout 超时时间ms
+ * @return RT_OK 成功, -RT_ETIMEOUT 超时
+ */
+rt_err_t lcd_7_wait_o2_work_valid(rt_int32_t timeout);
+
+/**
+ * @brief 获取制氧机是否开始工作
+ * @return 0:开始工作 1:停止工作
+ */
+uint8_t lcd_7_get_o2_work(void);
 
 #ifdef __cplusplus
 }

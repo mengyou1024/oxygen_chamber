@@ -70,7 +70,6 @@ rt_err_t gas_pressure_value_valid(rt_int32_t timeout) {
 }
 
 rt_uint8_t get_gas_pressure_value(void) {
-    gas_pressure_value_valid(RT_WAITING_FOREVER);
     rt_enter_critical();
     rt_uint8_t value = gas_pressure_average_value;
     rt_exit_critical();

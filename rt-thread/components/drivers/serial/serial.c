@@ -1290,6 +1290,9 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 {
+    if (serial == RT_NULL){
+        return;
+    }
     switch (event & 0xff)
     {
         case RT_SERIAL_EVENT_RX_IND:
@@ -1300,6 +1303,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 
             /* interrupt mode receive */
             rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
+            if (rx_fifo == RT_NULL) {
+                LOG_E("rx_fifo is RT_NULL");
+                return;
+            }
             RT_ASSERT(rx_fifo != RT_NULL);
 
             while (1)

@@ -263,8 +263,8 @@ static const struct gd32_uart uart_obj[] = {
         GPIOE, GPIO_AF_8, GPIO_PIN_7,          // tx port, tx alternate, tx pin
         GPIOE, GPIO_AF_8, GPIO_PIN_8,          // rx port, rx alternate, rx pin
 #else
-        GPIOE, GPIO_PIN_7,          // tx port, tx pin
-        GPIOE, GPIO_PIN_8,          // rx port, rx pin
+        GPIOE, GPIO_PIN_8,          // tx port, tx pin
+        GPIOE, GPIO_PIN_7,          // rx port, rx pin
 #endif
         &serial6,
         "uart6",
@@ -280,8 +280,8 @@ static const struct gd32_uart uart_obj[] = {
         GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
         GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
 #else
-        GPIOE, GPIO_PIN_0,          // tx port, tx pin
-        GPIOE, GPIO_PIN_1,          // rx port, rx pin
+        GPIOE, GPIO_PIN_1,          // tx port, tx pin
+        GPIOE, GPIO_PIN_0,          // rx port, rx pin
 #endif
         &serial7,
         "uart7",

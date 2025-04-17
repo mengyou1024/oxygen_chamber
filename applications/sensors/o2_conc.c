@@ -16,7 +16,9 @@ static rt_mutex_t     o2_conc_data_mutex = RT_NULL;
 
 static rt_err_t uart_input(rt_device_t dev, rt_size_t size) {
     // 中断接收模式, 每次仅收到一个byte的数
-    rt_sem_release(rx_sem);
+    for (int i = 0; i < size; i++) {
+        rt_sem_release(rx_sem);
+    }
     return RT_EOK;
 }
 
@@ -30,22 +32,31 @@ static void o2_conc_process_thread(void* param) {
     uint8_t        buffer[RT_SERIAL_RB_BUFSZ] = {0};
     uint8_t        buffer_len                 = 0;
     O2_CONC_STATUS status                     = O2_CONC_WAIT_HEADER;
-    uint8_t        payload_buf[6]             = {0};
+    uint8_t        payload_buf[8]             = {0};
     uint8_t        payload_len                = 0;
 
     while (1) {
         rt_sem_take(rx_sem, RT_WAITING_FOREVER);
         // 读取串口数据
-        buffer_len += rt_device_read(uart_device, 0, buffer, 1);
+        buffer_len += rt_device_read(uart_device, 0, buffer + buffer_len, 1);
         switch (status) {
             case O2_CONC_WAIT_HEADER:
-                if (buffer[buffer_len - 1] == 0xFF) {
+                if (buffer[buffer_len - 1] == 0x16) {
                     rt_sem_take(rx_sem, RT_WAITING_FOREVER);
                     // 读取长度
-                    buffer_len += rt_device_read(uart_device, 0, buffer, 1);
+                    buffer_len += rt_device_read(uart_device, 0, buffer + buffer_len, 1);
                     uint8_t head = buffer[buffer_len - 1];
                     if (head != 0x09) {
                         LOG_E("head error %d", head);
+                        buffer_len = 0; // 重置缓冲区
+                        break;
+                    }
+                    rt_sem_take(rx_sem, RT_WAITING_FOREVER);
+                    // 读取长度
+                    buffer_len += rt_device_read(uart_device, 0, buffer + buffer_len, 1);
+                    uint8_t cmd = buffer[buffer_len - 1];
+                    if (cmd != 0x01) {
+                        LOG_E("cmd error %d", cmd);
                         buffer_len = 0; // 重置缓冲区
                         break;
                     }
@@ -72,22 +83,29 @@ static void o2_conc_process_thread(void* param) {
                 checksum = 0x00 - (0x20 + checksum);
                 if (buffer[buffer_len - 1] == checksum) {
                     rt_mutex_take(o2_conc_data_mutex, RT_WAITING_FOREVER);
-                    LOG_I("O2 Concentration: %d, O2 Flow: %d, Temperature: %d",
+                    rt_memcpy(&o2_conc_data, payload_buf, sizeof(o2_conc_struct));
+                    o2_conc_data.o2_concentration = swap_u16(o2_conc_data.o2_concentration);
+                    o2_conc_data.o2_flow          = swap_u16(o2_conc_data.o2_flow);
+                    o2_conc_data.temperature      = swap_u16(o2_conc_data.temperature);
+                    LOG_I("O2 Concentration: %d, O2 Flow: %d, Temperature: %d\r\n",
                           o2_conc_data.o2_concentration,
                           o2_conc_data.o2_flow,
                           o2_conc_data.temperature);
-                    rt_memcpy(&o2_conc_data, payload_buf, sizeof(o2_conc_struct));
                     o2_conc_data_valid = RT_TRUE;
                     rt_mutex_release(o2_conc_data_mutex);
                 } else {
                     LOG_E("checksum error %#02x != recv:%#02d", checksum, buffer[buffer_len - 1]);
                     // 未验证校验和是否正确
                     rt_mutex_take(o2_conc_data_mutex, RT_WAITING_FOREVER);
-                    LOG_I("O2 Concentration: %d, O2 Flow: %d, Temperature: %d",
+                    rt_memcpy(&o2_conc_data, payload_buf, sizeof(o2_conc_struct));
+                    o2_conc_data.o2_concentration = swap_u16(o2_conc_data.o2_concentration);
+                    o2_conc_data.o2_flow          = swap_u16(o2_conc_data.o2_flow);
+                    o2_conc_data.temperature      = swap_u16(o2_conc_data.temperature);
+                    LOG_I("O2 Concentration: %d, O2 Flow: %d, Temperature: %d\r\n",
                           o2_conc_data.o2_concentration,
                           o2_conc_data.o2_flow,
                           o2_conc_data.temperature);
-                    rt_memcpy(&o2_conc_data, payload_buf, sizeof(o2_conc_struct));
+
                     o2_conc_data_valid = RT_TRUE;
                     rt_mutex_release(o2_conc_data_mutex);
                 }
@@ -122,10 +140,6 @@ void o2_conc_init(void) {
 
     rt_device_set_rx_indicate(uart_device, uart_input);
 
-    if (rt_device_open(uart_device, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX) != RT_EOK) {
-        LOG_E("%s open failed", O2_CONC_UART);
-    }
-
     rt_thread_t thread = rt_thread_create(
         "o2con_proc",
         o2_conc_process_thread,
@@ -144,6 +158,10 @@ void o2_conc_init(void) {
         rt_thread_delete(thread);
         rt_device_close(uart_device);
     }
+
+    if (rt_device_open(uart_device, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX) != RT_EOK) {
+        LOG_E("%s open failed", O2_CONC_UART);
+    }
 }
 
 rt_err_t o2_conc_value_wait_valid(rt_int32_t timeout) {
@@ -159,7 +177,6 @@ rt_err_t o2_conc_value_wait_valid(rt_int32_t timeout) {
 
 o2_conc_struct get_o2_conc_value(void) {
     o2_conc_struct ret;
-    o2_conc_value_wait_valid(RT_WAITING_FOREVER);
     rt_mutex_take(o2_conc_data_mutex, RT_WAITING_FOREVER);
     rt_memcpy(&ret, &o2_conc_data, sizeof(o2_conc_struct));
     rt_mutex_release(o2_conc_data_mutex);

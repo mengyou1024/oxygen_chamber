@@ -33,6 +33,6 @@ rt_err_t lcd_3_5_send_data(lcd_3_5_send_struct_t data) {
     }
 
     rt_device_write(device, 0, "\x11\x22\x33\x44", 4);
-    rt_device_write(device, 0, data, sizeof(lcd_3_5_send_struct_t));
+    rt_device_write(device, 0, data, sizeof(lcd_3_5_send_struct));
     return RT_EOK;
 }

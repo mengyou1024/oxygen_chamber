@@ -20,7 +20,7 @@ rt_err_t gas_pressure_value_valid(rt_int32_t timeout);
 
 /**
  * @brief 获取气体压力数据
- * @return 气体压力数据, 如果值无效则会阻塞等待
+ * @return 气体压力数据
  * 
  */
 rt_uint8_t get_gas_pressure_value(void);

@@ -20,7 +20,7 @@ rt_err_t sco3_o2_value_valid(rt_int32_t timeout);
 
 /**
  * @brief 获取氧浓度数据
- * @return 氧浓度数据(0.1%), 如果值无效则会阻塞等待
+ * @return 氧浓度数据(0.1%)
  */
 rt_uint16_t get_sco3_o2_value(void);
 

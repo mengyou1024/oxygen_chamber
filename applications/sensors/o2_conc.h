@@ -21,7 +21,7 @@ void o2_conc_init(void);
 
 typedef struct {
     rt_uint16_t o2_concentration; // 氧浓度值
-    rt_uint8_t  o2_flow;          // 氧流量值
+    rt_uint16_t o2_flow;          // 氧流量值
     rt_uint16_t temperature;      // 温度值
 } o2_conc_struct, *o2_conc_struct_t;
 
@@ -34,7 +34,7 @@ rt_err_t o2_conc_value_valid(rt_int32_t timeout);
 
 /**
  * @brief 获取氧浓度数据
- * @return 氧浓度数据, 如果值无效则会阻塞等待
+ * @return 氧浓度数据
  */
 o2_conc_struct get_o2_conc_value(void);
 

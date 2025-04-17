@@ -20,3 +20,7 @@
 
 // DHT11
 #define DHT11_PIN            GET_PIN(C, 2)
+
+inline static uint16_t swap_u16(uint16_t val) {
+    return (val >> 8) | (val << 8);
+}
