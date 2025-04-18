@@ -83,7 +83,7 @@ int main(void) {
         lcd_3_5_data.sco3_o2_conc = sco3_o2_conc_value;
         lcd_3_5_data.temperature  = temperture;
         lcd_3_5_data.humidity     = humidity;
-        lcd_3_5_data.nai_conc     = nai_conc_value;
+        lcd_3_5_data.nai_conc     = nai_conc_value * 10;
         lcd_3_5_send_data(&lcd_3_5_data);
         lcd_7_send_data(&lcd_3_5_data);
 
@@ -131,7 +131,7 @@ int main(void) {
                     lcd_3_5_data.sco3_o2_conc = sco3_o2_conc_value;
                     lcd_3_5_data.temperature  = temperture;
                     lcd_3_5_data.humidity     = humidity;
-                    lcd_3_5_data.nai_conc     = nai_conc_value;
+                    lcd_3_5_data.nai_conc     = nai_conc_value * 10;
                     lcd_3_5_send_data(&lcd_3_5_data);
                     lcd_7_send_data(&lcd_3_5_data);
 
