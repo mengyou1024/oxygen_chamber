@@ -108,7 +108,7 @@ static void nai_conc_process_thread(void* param) {
     }
 }
 
-rt_err_t nai_conc_init(void) {
+void nai_conc_init(void) {
     uart_device = rt_device_find(NAI_CONC_UART);
 
     if (uart_device == RT_NULL) {

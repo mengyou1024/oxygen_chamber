@@ -9,7 +9,7 @@ extern "C" {
 #include "sensors_config.h"
 #include <rtdef.h>
 
-rt_err_t nai_conc_init(void);
+void nai_conc_init(void);
 
 rt_err_t nai_conc_wait_value_valid(rt_int32_t timeout);
 
