@@ -40,7 +40,6 @@ static void sco3_o2_process_thread(void* param) {
         rt_sem_take(rx_sem, RT_WAITING_FOREVER);
         // 读取串口数据
         buffer_len += rt_device_read(uart_device, 0, buffer + buffer_len, 1);
-        rt_kprintf("%#02X", buffer[buffer_len - 1]);
         switch (status) {
             case SCO3_O2_WAIT_HEADER:
                 if (buffer[buffer_len - 1] == 0xFF) {
@@ -82,13 +81,6 @@ static void sco3_o2_process_thread(void* param) {
                     rt_mutex_release(sco3_o2_data_mutex);
                 } else {
                     LOG_E("check_sum error %#02x != recv:%#02d", check_sum, buffer[buffer_len - 1]);
-                    // 未验证校验和是否正确
-                    rt_mutex_take(sco3_o2_data_mutex, RT_WAITING_FOREVER);
-                    rt_memcpy(&sco3_o2_data, payload_buf, sizeof(sco3_o2_data));
-                    sco3_o2_data = swap_u16(sco3_o2_data);
-                    LOG_I("O2 Concentration: %d.%d%%", sco3_o2_data / 10, sco3_o2_data % 10);
-                    sco3_o2_data_valid = RT_TRUE;
-                    rt_mutex_release(sco3_o2_data_mutex);
                 }
                 buffer_len = 0; // 重置缓冲区
                 status     = SCO3_O2_WAIT_HEADER;

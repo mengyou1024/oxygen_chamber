@@ -95,19 +95,6 @@ static void o2_conc_process_thread(void* param) {
                     rt_mutex_release(o2_conc_data_mutex);
                 } else {
                     LOG_E("checksum error %#02x != recv:%#02d", checksum, buffer[buffer_len - 1]);
-                    // 未验证校验和是否正确
-                    rt_mutex_take(o2_conc_data_mutex, RT_WAITING_FOREVER);
-                    rt_memcpy(&o2_conc_data, payload_buf, sizeof(o2_conc_struct));
-                    o2_conc_data.o2_concentration = swap_u16(o2_conc_data.o2_concentration);
-                    o2_conc_data.o2_flow          = swap_u16(o2_conc_data.o2_flow);
-                    o2_conc_data.temperature      = swap_u16(o2_conc_data.temperature);
-                    LOG_I("O2 Concentration: %d, O2 Flow: %d, Temperature: %d\r\n",
-                          o2_conc_data.o2_concentration,
-                          o2_conc_data.o2_flow,
-                          o2_conc_data.temperature);
-
-                    o2_conc_data_valid = RT_TRUE;
-                    rt_mutex_release(o2_conc_data_mutex);
                 }
                 buffer_len = 0; // 重置缓冲区
                 status     = O2_CONC_WAIT_HEADER;

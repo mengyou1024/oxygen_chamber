@@ -51,7 +51,6 @@ static void nai_conc_process_thread(void* param) {
         rt_sem_take(rx_sem, RT_WAITING_FOREVER);
         // 读取串口数据
         buffer_len += rt_device_read(uart_device, 0, buffer + buffer_len, 1);
-        rt_kprintf("%#02X", buffer[buffer_len - 1]);
         switch (status) {
             case NAI_CONC_IP:
                 if (buffer[buffer_len - 1] == 0x01) {
