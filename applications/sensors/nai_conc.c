@@ -87,6 +87,7 @@ static void nai_conc_process_thread(void* param) {
                     nai_conc_data       = (payload_buf[0] << 8) | payload_buf[1];
                     nai_conc_data_valid = RT_TRUE;
                     rt_exit_critical();
+                    LOG_D("nai_conc_data: %d", nai_conc_data);
                     status      = NAI_CONC_CRC;
                     payload_len = 0;
                 }
