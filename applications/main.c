@@ -33,7 +33,7 @@ int main(void) {
     rt_pin_mode(MOLECULAR_SIEVE_1_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(MOLECULAR_SIEVE_2_PIN, PIN_MODE_OUTPUT);
 
-    struct dht_device dht11_dev = {};
+    struct dht_device dht11_dev = {0};
     dht_init(&dht11_dev, DHT11_PIN);
     lcd_3_5_init();
     lcd_7_inch_init();
@@ -217,7 +217,6 @@ static rt_device_t wdg_dev; /* 看门狗设备句柄 */
 static void idle_hook(void) {
     /* 在空闲线程的回调函数里喂狗 */
     rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, NULL);
-    LOG_D("feed the dog!");
 }
 
 static void wdt_init(void) {
@@ -229,6 +228,8 @@ static void wdt_init(void) {
     rt_device_init(wdg_dev);
 
     rt_uint32_t timeout = 3; /* 溢出时间，单位：秒 */
+    /* 设置超时时间 */
+    rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     /* 启动看门狗 */
     rt_err_t ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
     if (ret != RT_EOK) {

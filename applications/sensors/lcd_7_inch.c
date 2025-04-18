@@ -10,7 +10,6 @@
 
 static rt_device_t uart_device   = RT_NULL;
 static rt_sem_t    rx_sem        = RT_NULL;
-static rt_mutex_t  lcd_dev_mutex = RT_NULL;
 
 static uint8_t   _oxygen_concentration_value = 0;
 static rt_bool_t _oxygen_concentration_valid = RT_FALSE;
@@ -119,7 +118,6 @@ void lcd_7_inch_init(void) {
 
     // 创建信号量
     rx_sem        = rt_sem_create("lcd_rx", 0, RT_IPC_FLAG_FIFO);
-    lcd_dev_mutex = rt_mutex_create("lcd_mt", RT_IPC_FLAG_FIFO);
 
     rt_device_set_rx_indicate(uart_device, uart_input);
 

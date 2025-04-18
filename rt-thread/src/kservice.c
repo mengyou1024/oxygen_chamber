@@ -25,6 +25,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+#include <gd32f20x.h>
 
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
@@ -45,12 +46,14 @@ static volatile int __rt_errno;
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
 #endif
-
-RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
+void rt_hw_us_delay(rt_uint32_t us)
 {
-    (void) us;
-    RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
-        "Please consider implementing rt_hw_us_delay() in another file.\n"));
+    rt_uint32_t delta;
+
+    us = us * (SysTick->LOAD / (1000000 / RT_TICK_PER_SECOND));
+    delta = SysTick->VAL;
+
+    while (delta - SysTick->VAL < us) continue;
 }
 
 static const char* rt_errno_strs[] =
