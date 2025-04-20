@@ -88,7 +88,7 @@ int main(void) {
         lcd_7_send_data(&lcd_3_5_data);
 
         // 开始制氧气
-        if (lcd7_o2_set == 1) {
+        if (lcd7_o2_work == 1) {
             // 如果被设置了5分钟后关闭制氧泵, 则取消
             if (close_oxygen_generation_pump_timer->parent.flag & RT_TIMER_FLAG_ACTIVATED) {
                 // 如果定时器没有启动, 启动定时器
@@ -113,7 +113,7 @@ int main(void) {
                     rt_timer_start(molecular_sieve_loop_timer);
                 }
                 // TAG: 正常制氧状态
-                while (lcd7_o2_set) {
+                while (lcd7_o2_work) {
                     dht_read(&dht11_dev);
 
                     lcd7_o2_set        = lcd_7_get_o2_value();
