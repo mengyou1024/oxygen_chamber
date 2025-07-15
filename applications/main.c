@@ -136,10 +136,10 @@ int main(void) {
                     lcd_7_send_data(&lcd_3_5_data);
 
                     // 监控空间氧浓度
-                    if (sco3_o2_conc_value > lcd7_o2_set) {
+                    if (sco3_o2_conc_value > lcd7_o2_set * 10) {
                         // 氧浓度大于设定值, 负氧泵停止工作
                         rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_LOW);
-                    } else if (sco3_o2_conc_value < lcd7_o2_set - 2) {
+                    } else if (sco3_o2_conc_value < (lcd7_o2_set - 2) * 10) {
                         // 氧浓度小于设定值, 负氧泵工作
                         rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_HIGH);
                     }
