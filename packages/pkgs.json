@@ -1,5 +1,10 @@
 [
  {
+  "name": "CJSON",
+  "path": "/packages/language/JSON/cJSON",
+  "ver": "v1.7.17"
+ },
+ {
   "name": "DHTXX",
   "path": "/packages/peripherals/sensors/dhtxx",
   "ver": "latest"

@@ -10,7 +10,6 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -336,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, GD32F20X_CL, RT_USING_ARM_LIBC, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, __RTTHREAD__</Define>
+              <Define>GD32F20X_CL, RT_USING_LIBC, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, USE_STDPERIPH_DRIVER, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;rt-thread\components\libc\compilers\common\include;rt-thread\components\libc\compilers\common\extension;rt-thread\components\libc\compilers\common\extension\fcntl\octal;rt-thread\libcpu\arm\common;rt-thread\libcpu\arm\cortex-m3;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\drivers\include;packages\dhtxx-latest\inc;board;libraries\gd32_drivers;rt-thread\components\finsh;.;rt-thread\include;libraries\GD32F20x_Firmware_Library\CMSIS\GD\GD32F20x\Include;libraries\GD32F20x_Firmware_Library\CMSIS;libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Include;rt-thread\components\libc\posix\io\poll;rt-thread\components\libc\posix\io\stdio;rt-thread\components\libc\posix\ipc</IncludePath>
+              <IncludePath>applications;.;packages\cJSON-v1.7.17;rt-thread\components\libc\compilers\common\include;rt-thread\components\libc\compilers\common\extension;rt-thread\components\libc\compilers\common\extension\fcntl\octal;rt-thread\libcpu\arm\common;rt-thread\libcpu\arm\cortex-m3;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\drivers\include;packages\dhtxx-latest\inc;board;libraries\gd32_drivers;rt-thread\components\finsh;.;rt-thread\include;libraries\GD32F20x_Firmware_Library\CMSIS\GD\GD32F20x\Include;libraries\GD32F20x_Firmware_Library\CMSIS;libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Include;rt-thread\components\libc\posix\io\poll;rt-thread\components\libc\posix\io\stdio;rt-thread\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,9 +382,9 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>nai_conc.c</FileName>
+              <FileName>lcd_3_5_inch.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\sensors\nai_conc.c</FilePath>
+              <FilePath>applications\sensors\lcd_3_5_inch.c</FilePath>
             </File>
             <File>
               <FileName>o2_conc.c</FileName>
@@ -393,14 +392,9 @@
               <FilePath>applications\sensors\o2_conc.c</FilePath>
             </File>
             <File>
-              <FileName>sco3_o2.c</FileName>
+              <FileName>gas_pressure.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\sensors\sco3_o2.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcd_7_inch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\sensors\lcd_7_inch.c</FilePath>
+              <FilePath>applications\sensors\gas_pressure.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -408,14 +402,34 @@
               <FilePath>applications\main.c</FilePath>
             </File>
             <File>
-              <FileName>gas_pressure.c</FileName>
+              <FileName>sco3_o2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\sensors\gas_pressure.c</FilePath>
+              <FilePath>applications\sensors\sco3_o2.c</FilePath>
             </File>
             <File>
-              <FileName>lcd_3_5_inch.c</FileName>
+              <FileName>nai_conc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\sensors\lcd_3_5_inch.c</FilePath>
+              <FilePath>applications\sensors\nai_conc.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_7_inch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\sensors\lcd_7_inch.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cJSON</GroupName>
+          <Files>
+            <File>
+              <FileName>cJSON_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\cJSON-v1.7.17\cJSON_Utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>cJSON.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\cJSON-v1.7.17\cJSON.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -608,11 +622,6 @@
               <FilePath>rt-thread\components\finsh\shell.c</FilePath>
             </File>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>rt-thread\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>rt-thread\components\finsh\cmd.c</FilePath>
@@ -621,6 +630,11 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>rt-thread\components\finsh\msh_parse.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>rt-thread\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -698,9 +712,19 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f20x_rcu.c</FileName>
+              <FileName>gd32f20x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_rcu.c</FilePath>
+              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32f20x_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_gd32f20x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\GD32F20x_Firmware_Library\CMSIS\GD\GD32F20x\Source\system_gd32f20x.c</FilePath>
             </File>
             <File>
               <FileName>gd32f20x_gpio.c</FileName>
@@ -713,34 +737,24 @@
               <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_wwdgt.c</FilePath>
             </File>
             <File>
-              <FileName>gd32f20x_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_gd32f20x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\GD32F20x_Firmware_Library\CMSIS\GD\GD32F20x\Source\system_gd32f20x.c</FilePath>
-            </File>
-            <File>
               <FileName>gd32f20x_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_misc.c</FilePath>
             </File>
             <File>
-              <FileName>gd32f20x_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_exti.c</FilePath>
-            </File>
-            <File>
-              <FileName>gd32f20x_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_adc.c</FilePath>
-            </File>
-            <File>
               <FileName>gd32f20x_fwdgt.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_fwdgt.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32f20x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32f20x_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Source\gd32f20x_rcu.c</FilePath>
             </File>
           </Files>
         </Group>
