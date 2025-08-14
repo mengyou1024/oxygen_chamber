@@ -26,8 +26,9 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size) {
     return RT_EOK;
 }
 
-// LCD发送 0x55 0x01 0x01 氧浓度设置值(1byte)  氧浓度设置值(1byte)(重复发送)
-// 板卡发送 0x55 0x02 0x0C 0x00 lcd_7_send_struct
+// LCD发送 0x55 0x01 0x01 氧浓度设置值(1byte)  
+// 是否开始制氧(1byte)  压力上限值(1byte) 充气时间(1byte) 放气时间(1byte) 是否暂停制氧(1byte) 充放气状态(1byte)
+// 板卡发送 0x55 0x02 0x0C 0x00 lcd_7_send_struct 4 + 14 = 18 bytes
 
 typedef enum {
     LCD_7_RECV_STATE_HEADER = 0,

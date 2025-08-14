@@ -8,8 +8,26 @@ extern "C" {
 #include "sensors_config.h"
 #include <rtdef.h>
 
-typedef lcd_3_5_send_struct lcd_7_send_struct;
-typedef lcd_7_send_struct*  lcd_7_send_struct_t;
+typedef struct
+{
+    rt_int16_t o2_conc;      ///< 制氧浓度
+    rt_int16_t o2_conc_set;  ///< 制氧设置浓度
+    rt_int16_t sco3_o2_conc; ///< 空间氧浓度
+    rt_int16_t temperature;  ///< 温度值
+    rt_int16_t humidity;     ///< 湿度值
+    rt_int16_t nai_conc;     ///< 负氧离子浓度
+    rt_int16_t pressure;     ///< 压力值
+} lcd_7_send_struct, *lcd_7_send_struct_t;
+
+typedef struct {
+    rt_uint8_t o2_set_value;       ///< 制氧浓度设置值
+    rt_uint8_t is_start_work;      ///< 是否开始制氧
+    rt_uint8_t pressure_max_limit; ///< 压力上限值
+    rt_uint8_t inflate_time;       ///< 充气时间(分)
+    rt_uint8_t deflate_time;       ///< 放气时间(分)
+    rt_uint8_t is_pause_work;      ///< 是否暂停制氧
+    rt_uint8_t is_inflate_status;  ///< 充放气状态 (0: NULL, 1: 充气, 0xFF: 放气)
+} lcd_7_recv_struct, *lcd_7_recv_struct_t;
 
 void lcd_7_inch_init(void);
 
