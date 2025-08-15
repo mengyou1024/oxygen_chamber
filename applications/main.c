@@ -12,7 +12,7 @@
 #include <rtdbg.h>
 
 // 气体压力传感器
-#define CONFIG_PRESSURE_SENSOR (15)
+#define CONFIG_PRESSURE_SENSOR (30)
 
 // 初始化看门狗定时器
 static void wdt_init(void);
@@ -32,6 +32,8 @@ int main(void) {
     rt_pin_mode(LAMP_2_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(MOLECULAR_SIEVE_1_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(MOLECULAR_SIEVE_2_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(FA_1_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(FA_4_PIN, PIN_MODE_OUTPUT);
 
     struct dht_device dht11_dev = {0};
     dht_init(&dht11_dev, DHT11_PIN);
@@ -100,13 +102,21 @@ int main(void) {
             rt_pin_write(NEGATIVE_OXYGEN_PUMP_PIN, PIN_HIGH);
 
             if (gas_pressure_value < CONFIG_PRESSURE_SENSOR) {
-                // 压力小于设定值时, 报警、1#灯、2#灯 输出 12V
+                // 压力小于设定值时,阀1、阀5（ALARM） 输出 12V
+                rt_pin_write(ALARM_PIN, PIN_HIGH);
+                rt_pin_write(LAMP_1_PIN, PIN_LOW);
+                rt_pin_write(LAMP_2_PIN, PIN_LOW);
+                rt_pin_write(FA_1_PIN, PIN_HIGH);
+                rt_pin_write(FA_4_PIN, PIN_LOW);
+
+            } else if (gas_pressure_value >= CONFIG_PRESSURE_SENSOR) {
+                // 压力达到设定值时, 阀1 输出 0V，阀6（1#灯）输出12V
                 rt_pin_write(ALARM_PIN, PIN_HIGH);
                 rt_pin_write(LAMP_1_PIN, PIN_HIGH);
-                rt_pin_write(LAMP_2_PIN, PIN_HIGH);
-            } else if (gas_pressure_value >= CONFIG_PRESSURE_SENSOR) {
-                // 压力达到设定值时, 报警 输出 0V
-                rt_pin_write(ALARM_PIN, PIN_LOW);
+                rt_pin_write(LAMP_2_PIN, PIN_LOW);
+                rt_pin_write(FA_1_PIN, PIN_LOW);
+                rt_pin_write(FA_4_PIN, PIN_LOW);
+
                 // 分子筛循环定时器开始工作
                 if (!(molecular_sieve_loop_timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)) {
                     // 如果定时器没有启动, 启动定时器
@@ -137,30 +147,83 @@ int main(void) {
 
                     // 监控空间氧浓度
                     if (sco3_o2_conc_value > lcd7_o2_set * 10) {
-                        // 氧浓度大于设定值, 负氧泵停止工作
+                        // 氧浓度大于设定值, 制氧泵停止工作
                         rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_LOW);
                     } else if (sco3_o2_conc_value < (lcd7_o2_set - 2) * 10) {
-                        // 氧浓度小于设定值, 负氧泵工作
+                        // 氧浓度小于设定值, 制氧泵工作
                         rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_HIGH);
                     }
                     // 监控气体压力传感器
                     if (gas_pressure_value < CONFIG_PRESSURE_SENSOR - 10) {
-                        // 压力小于设定值时, 报警、1#灯、2#灯 输出 12V
+                        // // 压力小于设定值时,阀1、阀5（ALARM） 输出 12V
+                        rt_pin_write(ALARM_PIN, PIN_HIGH);
+                        rt_pin_write(LAMP_1_PIN, PIN_LOW);
+                        rt_pin_write(LAMP_2_PIN, PIN_LOW);
+                        rt_pin_write(FA_1_PIN, PIN_HIGH);
+                        rt_pin_write(FA_4_PIN, PIN_LOW);
+                    } else {
+                        // 压力达到设定值时, 阀1 输出 0V，阀6（1#灯）输出12V
                         rt_pin_write(ALARM_PIN, PIN_HIGH);
                         rt_pin_write(LAMP_1_PIN, PIN_HIGH);
-                        rt_pin_write(LAMP_2_PIN, PIN_HIGH);
-                    } else {
-                        rt_pin_write(ALARM_PIN, PIN_LOW);
+                        rt_pin_write(LAMP_2_PIN, PIN_LOW);
+                        rt_pin_write(FA_1_PIN, PIN_LOW);
+                        rt_pin_write(FA_4_PIN, PIN_LOW);
                     }
 
                     rt_thread_mdelay(500);
                 }
             }
+        } else if (lcd7_o2_work == 2) {
+            // 暂停制氧后, 制氧泵、负氧泵关闭
+            rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_LOW);
+            rt_pin_write(NEGATIVE_OXYGEN_PUMP_PIN, PIN_LOW);
+            // 监控气体压力传感器
+            if (gas_pressure_value < CONFIG_PRESSURE_SENSOR - 10) {
+                // // 压力小于设定值时,阀1、阀5（ALARM） 输出 12V
+                rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_HIGH);
+                rt_pin_write(ALARM_PIN, PIN_HIGH);
+                rt_pin_write(LAMP_1_PIN, PIN_LOW);
+                rt_pin_write(LAMP_2_PIN, PIN_LOW);
+                rt_pin_write(FA_1_PIN, PIN_HIGH);
+                rt_pin_write(FA_4_PIN, PIN_LOW);
+            } else {
+                // 压力达到设定值时, 阀1 输出 0V，阀6（1#灯）输出12V
+                rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_LOW);
+                rt_pin_write(ALARM_PIN, PIN_HIGH);
+                rt_pin_write(LAMP_1_PIN, PIN_HIGH);
+                rt_pin_write(LAMP_2_PIN, PIN_LOW);
+                rt_pin_write(FA_1_PIN, PIN_LOW);
+                rt_pin_write(FA_4_PIN, PIN_LOW);
+            }
+            while (lcd7_o2_work) {
+                dht_read(&dht11_dev);
+
+                lcd7_o2_set        = lcd_7_get_o2_value();
+                lcd7_o2_work       = lcd_7_get_o2_work();
+                gas_pressure_value = get_gas_pressure_value();
+                nai_conc_value     = get_nai_conc_value();
+                o2_conc_value      = get_o2_conc_value();
+                sco3_o2_conc_value = get_sco3_o2_value();
+                temperture         = dht_get_temperature(&dht11_dev);
+                humidity           = dht_get_humidity(&dht11_dev);
+
+                // 更新LCD显示的数据
+                lcd_3_5_data.o2_conc      = o2_conc_value.o2_concentration;
+                lcd_3_5_data.o2_conc_set  = lcd7_o2_set * 10;
+                lcd_3_5_data.sco3_o2_conc = sco3_o2_conc_value;
+                lcd_3_5_data.temperature  = temperture;
+                lcd_3_5_data.humidity     = humidity;
+                lcd_3_5_data.nai_conc     = nai_conc_value * 10;
+                lcd_3_5_send_data(&lcd_3_5_data);
+                lcd_7_send_data(&lcd_3_5_data);
+            }
         } else {
-            // 停止制氧,
+            // 停止制氧, 阀4、阀7输出12V，阀5、阀1、阀6输出0V
             rt_pin_write(ALARM_PIN, PIN_LOW);
+            rt_pin_write(FA_1_PIN, PIN_LOW);
             rt_pin_write(LAMP_1_PIN, PIN_LOW);
-            rt_pin_write(LAMP_2_PIN, PIN_LOW);
+            rt_pin_write(LAMP_2_PIN, PIN_HIGH);
+            rt_pin_write(FA_4_PIN, PIN_HIGH);
             rt_pin_write(NEGATIVE_OXYGEN_PUMP_PIN, PIN_LOW);
             if (molecular_sieve_loop_timer->parent.flag & RT_TIMER_FLAG_ACTIVATED) {
                 // 如果定时器已经启动, 停止定时器
