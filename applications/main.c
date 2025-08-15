@@ -18,7 +18,7 @@
 static void wdt_init(void);
 /* 分子筛循环 */
 static void molecular_sieve_loop(void* parameter);
-/* 关闭制样泵 */
+/* 关闭制氧泵(定时器单次回调) */
 static void close_oxygen_generation_pump_oneshot(void* parameter);
 
 int main(void) {
@@ -32,8 +32,8 @@ int main(void) {
     rt_pin_mode(LAMP_2_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(MOLECULAR_SIEVE_1_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(MOLECULAR_SIEVE_2_PIN, PIN_MODE_OUTPUT);
-    rt_pin_mode(FA_1_PIN, PIN_MODE_OUTPUT);
-    rt_pin_mode(FA_4_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(SOLENOID_VALVE_1_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(SOLENOID_VALVE_4_PIN, PIN_MODE_OUTPUT);
 
     struct dht_device dht11_dev = {0};
     dht_init(&dht11_dev, DHT11_PIN);
@@ -53,6 +53,7 @@ int main(void) {
                                                             rt_tick_from_millisecond(1000),
                                                             RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 
+    // 延时关闭制氧泵定时器
     rt_timer_t close_oxygen_generation_pump_timer = rt_timer_create("cogp",
                                                                     close_oxygen_generation_pump_oneshot,
                                                                     RT_NULL,
@@ -106,16 +107,16 @@ int main(void) {
                 rt_pin_write(ALARM_PIN, PIN_HIGH);
                 rt_pin_write(LAMP_1_PIN, PIN_LOW);
                 rt_pin_write(LAMP_2_PIN, PIN_LOW);
-                rt_pin_write(FA_1_PIN, PIN_HIGH);
-                rt_pin_write(FA_4_PIN, PIN_LOW);
+                rt_pin_write(SOLENOID_VALVE_1_PIN, PIN_HIGH);
+                rt_pin_write(SOLENOID_VALVE_4_PIN, PIN_LOW);
 
             } else if (gas_pressure_value >= CONFIG_PRESSURE_SENSOR) {
                 // 压力达到设定值时, 阀1 输出 0V，阀6（1#灯）输出12V
                 rt_pin_write(ALARM_PIN, PIN_HIGH);
                 rt_pin_write(LAMP_1_PIN, PIN_HIGH);
                 rt_pin_write(LAMP_2_PIN, PIN_LOW);
-                rt_pin_write(FA_1_PIN, PIN_LOW);
-                rt_pin_write(FA_4_PIN, PIN_LOW);
+                rt_pin_write(SOLENOID_VALVE_1_PIN, PIN_LOW);
+                rt_pin_write(SOLENOID_VALVE_4_PIN, PIN_LOW);
 
                 // 分子筛循环定时器开始工作
                 if (!(molecular_sieve_loop_timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)) {
@@ -159,15 +160,15 @@ int main(void) {
                         rt_pin_write(ALARM_PIN, PIN_HIGH);
                         rt_pin_write(LAMP_1_PIN, PIN_LOW);
                         rt_pin_write(LAMP_2_PIN, PIN_LOW);
-                        rt_pin_write(FA_1_PIN, PIN_HIGH);
-                        rt_pin_write(FA_4_PIN, PIN_LOW);
+                        rt_pin_write(SOLENOID_VALVE_1_PIN, PIN_HIGH);
+                        rt_pin_write(SOLENOID_VALVE_4_PIN, PIN_LOW);
                     } else {
                         // 压力达到设定值时, 阀1 输出 0V，阀6（1#灯）输出12V
                         rt_pin_write(ALARM_PIN, PIN_HIGH);
                         rt_pin_write(LAMP_1_PIN, PIN_HIGH);
                         rt_pin_write(LAMP_2_PIN, PIN_LOW);
-                        rt_pin_write(FA_1_PIN, PIN_LOW);
-                        rt_pin_write(FA_4_PIN, PIN_LOW);
+                        rt_pin_write(SOLENOID_VALVE_1_PIN, PIN_LOW);
+                        rt_pin_write(SOLENOID_VALVE_4_PIN, PIN_LOW);
                     }
 
                     rt_thread_mdelay(500);
@@ -184,16 +185,16 @@ int main(void) {
                 rt_pin_write(ALARM_PIN, PIN_HIGH);
                 rt_pin_write(LAMP_1_PIN, PIN_LOW);
                 rt_pin_write(LAMP_2_PIN, PIN_LOW);
-                rt_pin_write(FA_1_PIN, PIN_HIGH);
-                rt_pin_write(FA_4_PIN, PIN_LOW);
+                rt_pin_write(SOLENOID_VALVE_1_PIN, PIN_HIGH);
+                rt_pin_write(SOLENOID_VALVE_4_PIN, PIN_LOW);
             } else {
                 // 压力达到设定值时, 阀1 输出 0V，阀6（1#灯）输出12V
                 rt_pin_write(OXYGEN_GENERATION_PUMP_PIN, PIN_LOW);
                 rt_pin_write(ALARM_PIN, PIN_HIGH);
                 rt_pin_write(LAMP_1_PIN, PIN_HIGH);
                 rt_pin_write(LAMP_2_PIN, PIN_LOW);
-                rt_pin_write(FA_1_PIN, PIN_LOW);
-                rt_pin_write(FA_4_PIN, PIN_LOW);
+                rt_pin_write(SOLENOID_VALVE_1_PIN, PIN_LOW);
+                rt_pin_write(SOLENOID_VALVE_4_PIN, PIN_LOW);
             }
             while (lcd7_o2_work) {
                 dht_read(&dht11_dev);
@@ -220,10 +221,10 @@ int main(void) {
         } else {
             // 停止制氧, 阀4、阀7输出12V，阀5、阀1、阀6输出0V
             rt_pin_write(ALARM_PIN, PIN_LOW);
-            rt_pin_write(FA_1_PIN, PIN_LOW);
+            rt_pin_write(SOLENOID_VALVE_1_PIN, PIN_LOW);
             rt_pin_write(LAMP_1_PIN, PIN_LOW);
             rt_pin_write(LAMP_2_PIN, PIN_HIGH);
-            rt_pin_write(FA_4_PIN, PIN_HIGH);
+            rt_pin_write(SOLENOID_VALVE_4_PIN, PIN_HIGH);
             rt_pin_write(NEGATIVE_OXYGEN_PUMP_PIN, PIN_LOW);
             if (molecular_sieve_loop_timer->parent.flag & RT_TIMER_FLAG_ACTIVATED) {
                 // 如果定时器已经启动, 停止定时器

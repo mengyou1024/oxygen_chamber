@@ -35,9 +35,9 @@
 // 2#灯
 #define LAMP_2_PIN                 COUNTROLER_OUT_7_PIN
 // 阀1
-#define FA_1_PIN                   COUNTROLER_OUT_1_PIN
+#define SOLENOID_VALVE_1_PIN       COUNTROLER_OUT_1_PIN
 // 阀4
-#define FA_4_PIN                   COUNTROLER_OUT_4_PIN
+#define SOLENOID_VALVE_4_PIN       COUNTROLER_OUT_4_PIN
 
 // 分子筛
 #define MOLECULAR_SIEVE_1_PIN      COUNTROLER_OUT_2_PIN
