@@ -9,17 +9,20 @@ extern "C" {
 
 void lcd_3_5_init(void);
 
-// 14 bytes
-typedef struct
-{
-    rt_int16_t o2_conc;      ///< 制氧浓度
-    rt_int16_t o2_conc_set;  ///< 制氧设置浓度
-    rt_int16_t sco3_o2_conc; ///< 空间氧浓度
-    rt_int16_t temperature;  ///< 温度值
-    rt_int16_t humidity;     ///< 湿度值
-    rt_int16_t nai_conc;     ///< 负氧离子浓度
-    rt_int16_t pressure;     ///< 压力值
+typedef struct {
+    float battery;     ///< 电池电量
+    float conc_sensor; ///< 氧浓度传感器
+    float neg_ion;     ///< 负氧离子浓度
+    float temperature; ///< 温度
+    float humidity;    ///< 湿度
+} lcd_3_5_recv_struct, *lcd_3_5_recv_struct_t;
+
+typedef struct {
+    float set_conc;    ///< 制氧设置浓度
+    float oxygen_conc; ///< 氧浓度
 } lcd_3_5_send_struct, *lcd_3_5_send_struct_t;
+
+lcd_3_5_recv_struct lcd_3_5_recv_data();
 
 rt_err_t lcd_3_5_send_data(lcd_3_5_send_struct_t data);
 
